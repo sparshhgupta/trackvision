@@ -1,0 +1,89 @@
+backend/temp/testrawvid_processed.avi
+backend/temp/testrawvid_processed.mp4
+backend/temp/testrawvid.mp4
+backend/temp/vid0126 (1)_processed.avi
+backend/temp/vid0126 (1)_processed.mp4
+backend/temp/vid0126 (1).mp4
+backend/temp/vid0126_csv.csv
+backend/uploads/uploaded_data.csv
+backend/temp
+backend/_pycache_
+frontend/node_modules
+frontend/node_modules/
+.env
+.next/
+build/
+dist/
+temp/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Node
+node_modules/
+build/
+
+# Temp files
+*temp*.txt
+apptemp.py
+0604app.txt
+
+# MacOS
+.DS_Store
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Node / React frontend
+frontend/node_modules/
+frontend/build/
+frontend/.env
+
+# Python backend
+backend/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.env
+venv/
+.env/
+*.egg-info/
+
+# Logs & temp files
+*.log
+*.txt
+*.out
+*.tmp
+
+# IDE/editor configs
+.vscode/
+.idea/
+*.swp
+
+# Coverage / test
+.coverage
+*.coverage
+coverage/
+.pytest_cache/
+jest-cache/
+jest-results.json
+
+# Package lock (optional if you want reproducible installs)
+# Uncomment below if you don’t want lockfiles in repo
+# backend/package-lock.json
+# frontend/package-lock.json
+
+# Ignore large/binary/temp files
+*.avi
+*.mp4
+*.csv
+*.pyc
+__pycache__/
+backend/__pycache__/
+node_modules/
+*.log
+*.DS_Store
+# frontend/node_modules/
