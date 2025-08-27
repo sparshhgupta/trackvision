@@ -1,0 +1,22 @@
+.download-csv-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #2563eb; /* Tailwind's blue-600 */
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
+}
+
+.download-csv-btn:hover {
+  background-color: #1d4ed8; /* Tailwind's blue-700 */
+}
+
+.download-csv-btn:active {
+  transform: scale(0.95);
+}

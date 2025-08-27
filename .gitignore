@@ -86,4 +86,8 @@ backend/__pycache__/
 node_modules/
 *.log
 *.DS_Store
+frontend/node_modules/
+backend/.venv/
+Dockerfile
+.dockerignore
 # frontend/node_modules/

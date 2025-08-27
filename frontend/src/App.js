@@ -31,6 +31,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import LandingPage from './components/LandingPage';
 import UploadSection from './components/UploadSection';
 import VideoPlayer from './components/VideoPlayer';
+import DownloadCsvButton from './components/DownloadCsvButton';
 import './App.css';
 
 function MainApp() {
@@ -50,6 +51,7 @@ function MainApp() {
       <div className="main">
         <VideoPlayer csvFile={csvFile}/>
       </div>
+      <DownloadCsvButton />
     </div>
   );
 }

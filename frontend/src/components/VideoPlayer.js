@@ -410,7 +410,7 @@ function VideoPlayer({ csvFile }) {
         </div>
       )}
 
-      <div className="save-download">
+      {/* <div className="save-download">
         <button
           onClick={() => {
             if (csvUploaded) {
@@ -423,9 +423,9 @@ function VideoPlayer({ csvFile }) {
         >
           Edit ID
         </button>
-      </div>
+      </div> */}
 
-      {showIdPopup && (
+      {/* {showIdPopup && (
         <div className="id-popup">
           <h3>Update ID</h3>
           <input
@@ -446,7 +446,7 @@ function VideoPlayer({ csvFile }) {
             startFrameTracking(); // Resume tracking when closing popup
           }}>Close</button>
         </div>
-      )}
+      )} */}
     </div>
   );
 }
