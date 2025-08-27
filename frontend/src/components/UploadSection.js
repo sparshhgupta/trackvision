@@ -4,13 +4,13 @@ import axios from 'axios';
 // frame_numbers = [30, 40, 50];
 let exportedFrameNumbers = [];
 
-
 function UploadSection({ csvFile, onCsvUpload }) {
   const [csvUploaded, setCsvUploaded] = useState(false);
   const [logEntries, setLogEntries] = useState([]);
   const [frameNumber, setFrameNumber] = useState("");
   const [A, setA] = useState("");
   const [B, setB] = useState("");
+  const [streamActive, setStreamActive] = useState(false);
 
   useEffect(() => {
     setCsvUploaded(!!csvFile);
@@ -28,6 +28,24 @@ function UploadSection({ csvFile, onCsvUpload }) {
     }
   };
 
+  const startMjpegStream = () => {
+    const mjpegContainer = document.querySelector('#mjpeg-container');
+    if (mjpegContainer) {
+      const timestamp = Date.now();
+      mjpegContainer.innerHTML = `
+        <img 
+          src="http://127.0.0.1:5000/mjpeg-stream?t=${timestamp}" 
+          alt="MJPEG Stream" 
+          data-mjpeg-stream="true"
+          style="max-width: 100%; height: auto; border: 1px solid #ccc;"
+          onload="this.style.opacity = '1'"
+          onerror="console.error('MJPEG stream error')"
+        />
+      `;
+      setStreamActive(true);
+    }
+  };
+
   const handleCsvUpload = async (event) => {
     const file = event.target.files[0];
     if (!file) return;
@@ -41,28 +59,22 @@ function UploadSection({ csvFile, onCsvUpload }) {
     formData.append('csv', file);
 
     try {
-      const response = await axios.post('http://127.0.0.1:5000/upload', formData, {
+      // Send CSV to backend for processing
+      const response = await axios.post('http://127.0.0.1:5000/upload-csv', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
-        responseType: 'blob',
       });
 
       if (response.status === 200) {
-        const contentDisposition = response.headers['content-disposition'];
-        const filename = contentDisposition 
-          ? contentDisposition.split('filename=')[1]?.replace(/"/g, '') 
-          : 'processed_video.mp4';
-
-        const url = window.URL.createObjectURL(new Blob([response.data]));
-        const videoPlayer = document.querySelector('video');
-        if (videoPlayer) {
-          videoPlayer.src = url;
-          videoPlayer.load();
-        }
-
-        alert('CSV file processed successfully. Video updated.');
+        alert('CSV file processed successfully. Starting MJPEG stream...');
+        
+        // Fetch frame numbers after successful upload
         await fetchFrameNumbers();
+        
+        // Start the MJPEG stream
+        startMjpegStream();
+        
         onCsvUpload(file, exportedFrameNumbers);
         setCsvUploaded(true);
       } else {
@@ -73,14 +85,7 @@ function UploadSection({ csvFile, onCsvUpload }) {
       
       let errorMessage = 'Error uploading CSV file';
       if (error.response) {
-        // Try to get error message from response
-        if (error.response.data instanceof Blob) {
-          // If the error response is a Blob, try to read it as text
-          const text = await error.response.data.text();
-          errorMessage = text || errorMessage;
-        } else {
-          errorMessage = error.response.data.message || errorMessage;
-        }
+        errorMessage = error.response.data?.message || error.response.statusText || errorMessage;
       } else {
         errorMessage = error.message || errorMessage;
       }
@@ -88,59 +93,6 @@ function UploadSection({ csvFile, onCsvUpload }) {
       alert(errorMessage);
     }
   };
-
-// const handleCsvUpload = async (event) => {
-//   const file = event.target.files[0];
-//   if (!file) return;
-
-//   if (file.type !== "text/csv") {
-//     alert("Please upload a valid CSV file.");
-//     return;
-//   }
-
-//   const formData = new FormData();
-//   formData.append("csv", file);
-
-//   try {
-//     const response = await axios.post("http://127.0.0.1:5000/upload", formData, {
-//       headers: {
-//         "Content-Type": "multipart/form-data",
-//       },
-//     });
-
-//     if (response.status === 200 && response.data.video_url) {
-//       const videoPlayer = document.querySelector("video");
-//       if (videoPlayer) {
-//         // Set video to stream from backend
-//         videoPlayer.src = response.data.video_url + `?t=${Date.now()}`;
-//         videoPlayer.load();
-//       }
-
-//       alert("CSV file processed successfully. Video streaming started.");
-//       await fetchFrameNumbers();
-//       onCsvUpload(file, exportedFrameNumbers);
-//       setCsvUploaded(true);
-//     } else {
-//       throw new Error("Server did not return video_url");
-//     }
-//   } catch (error) {
-//     console.error("CSV upload error:", error);
-
-//     let errorMessage = "Error uploading CSV file";
-//     if (error.response) {
-//       if (typeof error.response.data === "string") {
-//         errorMessage = error.response.data || errorMessage;
-//       } else if (error.response.data?.message) {
-//         errorMessage = error.response.data.message;
-//       }
-//     } else {
-//       errorMessage = error.message || errorMessage;
-//     }
-
-//     alert(errorMessage);
-//   }
-// };
-
 
   const handleLogChanges = () => {
     if (!frameNumber.trim() || !A.trim() || !B.trim()) {
@@ -172,13 +124,16 @@ function UploadSection({ csvFile, onCsvUpload }) {
       const data = await response.json();
       
       if (response.ok && data.success) {
-        const newVideoUrl = `http://127.0.0.1:5000/temp/${data.new_video}`;
-        const videoPlayer = document.querySelector('video');
-        if (videoPlayer) {
-          videoPlayer.src = newVideoUrl;
-          videoPlayer.load(); // Important to reload the video
+        // For MJPEG stream, we just need to refresh the image source
+        // The backend will automatically serve the updated frames
+        const mjpegImage = document.querySelector('img[data-mjpeg-stream]');
+        if (mjpegImage) {
+          // Force refresh by adding timestamp to prevent caching
+          const baseUrl = `http://127.0.0.1:5000/mjpeg-stream`;
+          const timestamp = Date.now();
+          mjpegImage.src = `${baseUrl}?t=${timestamp}`;
         }
-        alert("Logs successfully saved to backend.");
+        alert("Logs successfully saved to backend. Stream will update automatically.");
         setLogEntries([]);
       } else {
         alert(data.message || "Failed to update ID and reprocess video.");
@@ -186,6 +141,14 @@ function UploadSection({ csvFile, onCsvUpload }) {
     } catch (error) {
       console.error("Error updating ID:", error);
       alert(error.message || "Error updating ID.");
+    }
+  };
+
+  const refreshStream = () => {
+    const mjpegImage = document.querySelector('img[data-mjpeg-stream]');
+    if (mjpegImage) {
+      const timestamp = Date.now();
+      mjpegImage.src = `http://127.0.0.1:5000/mjpeg-stream?t=${timestamp}`;
     }
   };
 
@@ -203,49 +166,74 @@ function UploadSection({ csvFile, onCsvUpload }) {
           />
         </>
       ) : (
-        <div className="log-section">
-          <h3>Log Table</h3>
-          <input
-            type="text"
-            placeholder="Frame Number"
-            value={frameNumber}
-            onChange={(e) => setFrameNumber(e.target.value)}
-          />
-          <input
-            type="text"
-            placeholder="A"
-            value={A}
-            onChange={(e) => setA(e.target.value)}
-          />
-          <input
-            type="text"
-            placeholder="B"
-            value={B}
-            onChange={(e) => setB(e.target.value)}
-          />
-          <button onClick={handleLogChanges}>Register Changes</button>
-          <button onClick={handleClearTable}>Make Changes</button>
+        <div className="stream-section">
+          {/* MJPEG Stream Container */}
+          <div className="stream-container">
+            <h3>Live Stream</h3>
+            <div id="mjpeg-container" style={{ textAlign: 'center', marginBottom: '20px' }}>
+              {streamActive ? null : <p>Loading stream...</p>}
+            </div>
+            <button onClick={refreshStream} style={{ marginBottom: '20px' }}>
+              Refresh Stream
+            </button>
+          </div>
 
-          {logEntries.length > 0 && (
-            <table className="log-table">
-              <thead>
-                <tr>
-                  <th>Frame Number</th>
-                  <th>A</th>
-                  <th>B</th>
-                </tr>
-              </thead>
-              <tbody>
-                {logEntries.map((entry, index) => (
-                  <tr key={index}>
-                    <td>{entry.frameNumber}</td>
-                    <td>{entry.A}</td>
-                    <td>{entry.B}</td>
+          {/* Log Section */}
+          <div className="log-section">
+            <h3>Log Table</h3>
+            <div className="input-group" style={{ marginBottom: '10px' }}>
+              <input
+                type="text"
+                placeholder="Frame Number"
+                value={frameNumber}
+                onChange={(e) => setFrameNumber(e.target.value)}
+                style={{ marginRight: '10px', padding: '5px' }}
+              />
+              <input
+                type="text"
+                placeholder="A"
+                value={A}
+                onChange={(e) => setA(e.target.value)}
+                style={{ marginRight: '10px', padding: '5px' }}
+              />
+              <input
+                type="text"
+                placeholder="B"
+                value={B}
+                onChange={(e) => setB(e.target.value)}
+                style={{ marginRight: '10px', padding: '5px' }}
+              />
+            </div>
+            <div className="button-group" style={{ marginBottom: '20px' }}>
+              <button onClick={handleLogChanges} style={{ marginRight: '10px' }}>
+                Register Changes
+              </button>
+              <button onClick={handleClearTable}>
+                Make Changes
+              </button>
+            </div>
+
+            {logEntries.length > 0 && (
+              <table className="log-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr>
+                    <th style={{ border: '1px solid #ccc', padding: '8px' }}>Frame Number</th>
+                    <th style={{ border: '1px solid #ccc', padding: '8px' }}>A</th>
+                    <th style={{ border: '1px solid #ccc', padding: '8px' }}>B</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
+                </thead>
+                <tbody>
+                  {logEntries.map((entry, index) => (
+                    <tr key={index}>
+                      <td style={{ border: '1px solid #ccc', padding: '8px' }}>{entry.frameNumber}</td>
+                      <td style={{ border: '1px solid #ccc', padding: '8px' }}>{entry.A}</td>
+                      <td style={{ border: '1px solid #ccc', padding: '8px' }}>{entry.B}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
         </div>
       )}
     </div>

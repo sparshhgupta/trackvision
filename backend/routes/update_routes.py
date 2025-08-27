@@ -3,6 +3,7 @@ import logging
 import os
 from services.csv_service import get_uploaded_csv_path, update_csv_ids
 from services.video_service import process_video_with_updated_csv
+from services.stream_service import get_stream_processor
 
 update_bp = Blueprint('update', __name__)
 
@@ -17,17 +18,23 @@ def save_logs():
     if not csv_path:
         return jsonify({'success': False, 'error': 'CSV file missing'}), 400
 
+    # Update CSV with all log entries
     for log in logs:
         old_id = log.get('A')
         new_id = log.get('B')
         update_csv_ids(csv_path, old_id, new_id)
 
-    mp4_output_path, error = process_video_with_updated_csv(csv_path)
-    if error:
-        return jsonify({'success': False, 'error': error}), 400
-
-    return jsonify({'success': True, 'new_video': os.path.basename(mp4_output_path)}), 200
-
+    # Update the stream processor with new CSV data
+    stream_processor = get_stream_processor()
+    if stream_processor:
+        stream_processor.load_csv_data(csv_path)
+        return jsonify({'success': True}), 200
+    else:
+        # Fallback to video processing if stream not available
+        mp4_output_path, error = process_video_with_updated_csv(csv_path)
+        if error:
+            return jsonify({'success': False, 'error': error}), 400
+        return jsonify({'success': True, 'new_video': os.path.basename(mp4_output_path)}), 200
 
 @update_bp.route('/update-id', methods=['POST'])
 def update_id():
@@ -43,13 +50,21 @@ def update_id():
         if not csv_path:
             return jsonify({'success': False, 'error': 'CSV missing'}), 400
 
+        # Update CSV file
         update_csv_ids(csv_path, current_id, new_id)
 
-        mp4_output_path, error = process_video_with_updated_csv(csv_path)
-        if error:
-            return jsonify({'success': False, 'error': error}), 400
+        # Update the stream processor with new CSV data
+        stream_processor = get_stream_processor()
+        if stream_processor:
+            stream_processor.load_csv_data(csv_path)
+            return jsonify({'success': True}), 200
+        else:
+            # Fallback to video processing if stream not available
+            mp4_output_path, error = process_video_with_updated_csv(csv_path)
+            if error:
+                return jsonify({'success': False, 'error': error}), 400
+            return jsonify({'success': True, 'new_video': os.path.basename(mp4_output_path)}), 200
 
-        return jsonify({'success': True, 'new_video': os.path.basename(mp4_output_path)}), 200
     except Exception as e:
         logging.error(f"Error in /update-id: {e}")
         return jsonify({'success': False, 'error': str(e)}), 500
