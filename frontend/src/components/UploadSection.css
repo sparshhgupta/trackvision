@@ -24,13 +24,212 @@
   button {
     margin: 5px;
     padding: 5px 10px;
-    background-color: #28a745;
+    background-color: #4a90e2;
     color: white;
     border: none;
     cursor: pointer;
   }
+  /* Container styling */
+.input-container {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column; /* 👈 stack vertically */
+  align-items: center;    /* center them horizontally */
+  justify-content: center;
+  width: 100%;
+}
+
+/* Group layout */
+.input-group {
+  display: flex;
+  gap: 12px; /* spacing between inputs */
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* Individual input fields */
+.styled-input {
+  padding: 10px 14px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  outline: none;
+  transition: all 0.2s ease-in-out;
+  min-width: 120px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* On focus, make it feel active */
+.styled-input:focus {
+  border-color: #4a90e2; /* blue highlight */
+  box-shadow: 0 0 4px rgba(74, 144, 226, 0.4);
+}
+
+/* Placeholder styling */
+.styled-input::placeholder {
+  color: #aaa;
+  font-style: italic;
+}
+
+/* Small hover effect */
+.styled-input:hover {
+  border-color: #bbb;
+}
+
+
+
+  /* Button group container */
+.button-group {
+  display: flex;
+  gap: 12px; /* space between buttons */
+  margin-top: 1rem;
+}
+
+/* Base button styling */
+.button-group button {
+  padding: 10px 18px;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+/* Primary button */
+.btn-primary {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background-color: #0069d9;
+  transform: translateY(-1px);
+}
+
+.btn-primary:active {
+  background-color: #0056b3;
+  transform: translateY(0);
+}
+
+/* Secondary button */
+.btn-secondary {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.btn-secondary:hover {
+  background-color: #0069d9;
+  transform: translateY(-1px);
+}
+
+.btn-secondary:active {
+  background-color: #0056b3;
+  transform: translateY(0);
+}
+
+/* ===== Table Section ===== */
+.table-container {
+  margin-top: 20px;
+  width: 100%;
+  max-width: 800px;
+  background: var(--bg-card, #fff);
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  overflow: hidden;
+  animation: fadeIn 0.3s ease;
+}
+
+.table-header {
+  padding: 12px 16px;
+  background: var(--primary, #4a90e2);
+  color: #fff;
+  font-weight: bold;
+  font-size: 14px;
+  text-align: left;
+}
+
+.table-wrapper {
+  overflow-x: auto; /* in case table is wider than container */
+}
+
+.log-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.log-table th {
+  background: #f7f9fc;
+  text-align: left;
+  padding: 10px;
+  font-weight: 600;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.log-table td {
+  padding: 10px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.table-row:hover {
+  background: #f0f4ff; /* highlight row on hover */
+}
+
+
+/* Remove button */
+.btn-remove {
+  background: #ff4d4f;
+  border: none;
+  color: #fff;
+  font-size: 16px;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.btn-remove:hover {
+  background: #d9363e;
+}
+
+/* ===== Empty State ===== */
+.empty-state {
+  margin-top: 20px;
+  padding: 30px;
+  text-align: center;
+  color: #666;
+  background: var(--bg-card, #fafafa);
+  border: 2px dashed #ccc;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+.empty-icon {
+  font-size: 32px;
+  margin-bottom: 10px;
+}
+
+.empty-state p {
+  margin: 5px 0;
+  font-weight: 500;
+}
+
+.empty-state small {
+  color: #999;
+}
+
+/* ===== Animations ===== */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
   
-  .log-table {
+  /* .log-table {
+    background-color: #f4f4f4;
     margin-top: 15px;
     width: 100%;
     border-collapse: collapse;
@@ -45,4 +244,4 @@
   .log-table th {
     background-color: #f4f4f4;
   }
-  
+   */

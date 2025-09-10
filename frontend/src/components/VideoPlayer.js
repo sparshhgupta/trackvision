@@ -355,7 +355,7 @@ function VideoPlayer({ csvFile }) {
           <button onClick={navigateNext} disabled={isProcessing}>Next Frame</button>
           
           {/* Frame info display */}
-          <div style={{ margin: '10px 0', fontSize: '14px' }}>
+          <div className="frame-info">
             {frameData.frames.length > 0 && (
               <>
                 <span>Available frames: {frameData.frames.length} | </span>
@@ -367,7 +367,7 @@ function VideoPlayer({ csvFile }) {
           </div>
           
           {/* Jump to specific frame from available frames */}
-          <div style={{ margin: '10px 0' }}>
+          <div className="frame-jump">
             <label>Jump to Frame: </label>
             <select 
               onChange={(e) => {
@@ -389,7 +389,7 @@ function VideoPlayer({ csvFile }) {
           </div>
           
           {/* Manual frame input */}
-          <div style={{ margin: '10px 0' }}>
+          <div className="frame-input">
             <label>Or enter frame number: </label>
             <input
               type="number"

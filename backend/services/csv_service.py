@@ -13,6 +13,12 @@ def update_csv_ids(csv_path, current_id, new_id):
     df.to_csv(csv_path, index=False)
     logging.info(f"Updated track_id {current_id} -> {new_id}")
 
+def update_class_ids(csv_path, old_id, new_class_id):
+    df = pd.read_csv(csv_path)
+    df.loc[df['track_id'] == int(old_id), 'class_id'] = int(new_class_id)
+    df.to_csv(csv_path, index=False)
+    logging.info(f"Updated class_id for track {old_id} -> {new_class_id}")
+
 def download_updated_csv():
     """
     Returns the updated CSV file for download.

@@ -204,3 +204,20 @@ def get_edge_frames(csv_file):
     end_frame = (summary["end_frame"] for summary in tracks_summary.values())
 
     return start_frame, end_frame
+
+
+def get_overall_edge_frames(csv_file):
+    """New function that returns actual min/max values for JSON serialization"""
+    results = load_tracking_results_from_csv(csv_file)
+    assessment = StoredResultsAssessment()
+    assessment.process_stored_results(results)
+    tracks_summary = assessment.get_tracks_summary()
+
+    if not tracks_summary:
+        return None, None  # Handle case where no tracks are present
+
+    # Convert generators to actual min/max values
+    start_frame = min(summary["start_frame"] for summary in tracks_summary.values())
+    end_frame = max(summary["end_frame"] for summary in tracks_summary.values())
+
+    return start_frame, end_frame

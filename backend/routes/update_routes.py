@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 import logging
 import os
-from services.csv_service import get_uploaded_csv_path, update_csv_ids
+from services.csv_service import get_uploaded_csv_path, update_csv_ids, update_class_ids
 from services.video_service import process_video_with_updated_csv
 from services.stream_service import get_stream_processor
 
@@ -17,15 +17,26 @@ def save_logs():
     csv_path = get_uploaded_csv_path()
     if not csv_path:
         return jsonify({'success': False, 'error': 'CSV file missing'}), 400
+    
+    stream_processor = get_stream_processor()
 
     # Update CSV with all log entries
     for log in logs:
         old_id = log.get('A')
         new_id = log.get('B')
-        update_csv_ids(csv_path, old_id, new_id)
+        new_class_id = log.get('newClassId')
+        if(new_class_id):
+            update_class_ids(csv_path, old_id, new_class_id)
+        if(new_id):
+            if old_id in stream_processor.ids_to_display:
+                stream_processor.ids_to_display.remove(old_id)
+                stream_processor.ids_to_display.append(new_id)
+            stream_processor.switch_mapping[old_id] = new_id;
+            update_csv_ids(csv_path, old_id, new_id)
+    
+    
 
     # Update the stream processor with new CSV data
-    stream_processor = get_stream_processor()
     if stream_processor:
         stream_processor.load_csv_data(csv_path)
         return jsonify({'success': True}), 200

@@ -1,0 +1,56 @@
+.outputs-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px;
+}
+
+.outputs-title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.outputs-description {
+  font-size: 1.1rem;
+  color: #555;
+  margin-bottom: 30px;
+  text-align: center;
+  max-width: 600px;
+}
+
+.outputs-actions {
+  display: flex;
+  gap: 20px;
+}
+
+/* Shared button styles */
+.outputs-actions button {
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Download CSV button style */
+.outputs-actions button:first-child {
+  background-color: #007bff;
+  color: white;
+}
+
+.outputs-actions button:first-child:hover {
+  background-color: #0056b3;
+}
+
+/* View Analytics button style */
+.outputs-actions button:last-child {
+  background-color: #28a745;
+  color: white;
+}
+
+.outputs-actions button:last-child:hover {
+  background-color: #1e7e34;
+}

@@ -95,3 +95,66 @@
   color: white;
   border-color: #007bff;
 }
+
+.frame-navigation {
+  margin-top: 20px;
+  padding: 15px;
+  border-radius: 8px;
+  background: var(--card-bg, #f9f9f9);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  font-size: 14px;
+}
+
+.frame-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.frame-buttons button {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.frame-buttons button:disabled {
+  background: #cccccc;
+  cursor: not-allowed;
+}
+
+.frame-buttons button:hover:not(:disabled) {
+  background-color: #0056b3;
+}
+
+.frame-info {
+  margin: 10px 0;
+  font-size: 14px;
+  color: #333;
+}
+
+.frame-jump {
+  margin: 10px 0;
+}
+
+.frame-jump select {
+  margin-left: 5px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.frame-input {
+  margin: 10px 0;
+}
+
+.frame-input input {
+  margin-left: 5px;
+  width: 120px;
+  padding: 5px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
